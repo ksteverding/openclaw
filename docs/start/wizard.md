@@ -62,8 +62,10 @@ The wizard starts with **QuickStart** (defaults) vs **Advanced** (full control).
 
 **Local mode (default)** walks you through these steps:
 
-1. **Model/Auth** — Anthropic API key (recommended), OpenAI, or Custom Provider
-   (OpenAI-compatible, Anthropic-compatible, or Unknown auto-detect). Pick a default model.
+1. **Model/Auth** — Anthropic API key (recommended), OpenAI, Ollama (local or remote base URL),
+   or Custom Provider (OpenAI-compatible, Anthropic-compatible, or Unknown auto-detect).
+   Ollama setup can auto-discover models and always includes a manual model ID fallback.
+   Pick a default model.
 2. **Workspace** — Location for agent files (default `~/.openclaw/workspace`). Seeds bootstrap files.
 3. **Gateway** — Port, bind address, auth mode, Tailscale exposure.
 4. **Channels** — WhatsApp, Telegram, Discord, Google Chat, Mattermost, Signal, BlueBubbles, or iMessage.
@@ -78,6 +80,10 @@ If the config is invalid or contains legacy keys, the wizard asks you to run `op
 
 **Remote mode** only configures the local client to connect to a Gateway elsewhere.
 It does **not** install or change anything on the remote host.
+
+`--mode remote` configures remote gateway connection only.
+To configure remote Ollama base URL/model settings, run onboarding on the gateway host
+(typically local mode on that host).
 
 ## Add another agent
 

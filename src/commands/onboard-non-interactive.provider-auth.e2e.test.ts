@@ -297,6 +297,22 @@ describe("onboard (non-interactive): provider auth", () => {
     });
   }, 60_000);
 
+  it("rejects Ollama auth choice in non-interactive mode", async () => {
+    await withOnboardEnv("openclaw-onboard-ollama-non-interactive-", async ({ runtime }) => {
+      await expect(
+        runNonInteractiveOnboardingWithDefaults(runtime, {
+          authChoice: "ollama",
+          skipSkills: true,
+        }),
+      ).rejects.toThrow(
+        [
+          'Auth choice "ollama" requires interactive mode.',
+          "Use interactive onboard/configure to enter base URL and model ID.",
+        ].join("\n"),
+      );
+    });
+  }, 60_000);
+
   it("stores LiteLLM API key and sets default model", async () => {
     await withOnboardEnv("openclaw-onboard-litellm-", async (env) => {
       const cfg = await runOnboardingAndReadConfig(env, {

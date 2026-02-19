@@ -102,6 +102,17 @@ export async function applyNonInteractiveAuthChoice(params: {
     return null;
   }
 
+  if (authChoice === "ollama") {
+    runtime.error(
+      [
+        'Auth choice "ollama" requires interactive mode.',
+        "Use interactive onboard/configure to enter base URL and model ID.",
+      ].join("\n"),
+    );
+    runtime.exit(1);
+    return null;
+  }
+
   if (authChoice === "apiKey") {
     const resolved = await resolveNonInteractiveApiKey({
       provider: "anthropic",

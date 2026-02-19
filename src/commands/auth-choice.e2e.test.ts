@@ -849,6 +849,10 @@ describe("resolvePreferredProviderForAuthChoice", () => {
     expect(resolvePreferredProviderForAuthChoice("qwen-portal")).toBe("qwen-portal");
   });
 
+  it("maps ollama to the provider", () => {
+    expect(resolvePreferredProviderForAuthChoice("ollama")).toBe("ollama");
+  });
+
   it("returns undefined for unknown choices", () => {
     expect(resolvePreferredProviderForAuthChoice("unknown" as AuthChoice)).toBeUndefined();
   });

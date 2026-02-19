@@ -36,6 +36,9 @@ For a high-level overview, see [Onboarding Wizard](/start/wizard).
       - Sets `agents.defaults.model` to `openai-codex/gpt-5.2` when model is unset or `openai/*`.
     - **OpenAI API key**: uses `OPENAI_API_KEY` if present or prompts for a key, then saves it to `~/.openclaw/.env` so launchd can read it.
     - **xAI (Grok) API key**: prompts for `XAI_API_KEY` and configures xAI as a model provider.
+    - **Ollama (local or remote runtime)**: prompts for base URL, API key placeholder (`ollama-local`), and model selection.
+      - The wizard normalizes OpenAI-compatible `/v1` URLs back to native Ollama base URLs.
+      - It tries `/api/tags` discovery first and always includes a manual model ID fallback.
     - **OpenCode Zen (multi-model proxy)**: prompts for `OPENCODE_API_KEY` (or `OPENCODE_ZEN_API_KEY`, get it at https://opencode.ai/auth).
     - **API key**: stores the key for you.
     - **Vercel AI Gateway (multi-model proxy)**: prompts for `AI_GATEWAY_API_KEY`.
@@ -109,6 +112,11 @@ If no GUI is detected, the wizard prints SSH port-forward instructions for the C
 If the Control UI assets are missing, the wizard attempts to build them; fallback is `pnpm ui:build` (auto-installs UI deps).
 </Note>
 
+## Remote mode boundary
+
+`--mode remote` configures remote gateway connection only.
+Remote Ollama setup is configured when onboarding the gateway host (typically local mode on that host).
+
 ## Non-interactive mode
 
 Use `--non-interactive` to automate or script onboarding:
@@ -129,6 +137,10 @@ Add `--json` for a machine‑readable summary.
 
 <Note>
 `--json` does **not** imply non-interactive mode. Use `--non-interactive` (and `--workspace`) for scripts.
+</Note>
+
+<Note>
+`--auth-choice ollama` requires interactive mode. Use `openclaw onboard` or `openclaw configure` to enter Ollama base URL and model ID.
 </Note>
 
 <AccordionGroup>

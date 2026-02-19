@@ -26,6 +26,13 @@ openclaw onboard --flow manual
 openclaw onboard --mode remote --remote-url ws://gateway-host:18789
 ```
 
+Interactive Ollama setup:
+
+```bash
+openclaw onboard --flow manual
+# choose "Ollama (custom URL)" in Model/Auth
+```
+
 Non-interactive custom provider:
 
 ```bash
@@ -60,6 +67,9 @@ Flow notes:
 
 - `quickstart`: minimal prompts, auto-generates a gateway token.
 - `manual`: full prompts for port/bind/auth (alias of `advanced`).
+- `--mode remote` configures remote gateway connection only.
+- Remote Ollama setup is configured when onboarding the gateway host
+  (typically local mode on that host).
 - Fastest first chat: `openclaw dashboard` (Control UI, no channel setup).
 - Custom Provider: connect any OpenAI or Anthropic compatible endpoint,
   including hosted providers not listed. Use Unknown to auto-detect.
@@ -73,4 +83,8 @@ openclaw agents add <name>
 
 <Note>
 `--json` does not imply non-interactive mode. Use `--non-interactive` for scripts.
+</Note>
+
+<Note>
+`--auth-choice ollama` requires interactive mode. Use `openclaw onboard` or `openclaw configure` to enter base URL and model ID.
 </Note>

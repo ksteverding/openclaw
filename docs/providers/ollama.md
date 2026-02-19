@@ -10,6 +10,43 @@ title: "Ollama"
 
 Ollama is a local LLM runtime that makes it easy to run open-source models on your machine. OpenClaw integrates with Ollama's native API (`/api/chat`), supporting streaming and tool calling, and can **auto-discover tool-capable models** when you opt in with `OLLAMA_API_KEY` (or an auth profile) and do not define an explicit `models.providers.ollama` entry.
 
+## Onboarding wizard setup
+
+Run the onboarding wizard on the gateway host:
+
+```bash
+openclaw onboard --flow manual
+```
+
+In **Model/Auth**, choose **Ollama (custom URL)**.
+
+The wizard then:
+
+- Prompts for Ollama base URL (local or remote host URL are both valid).
+- Normalizes OpenAI-compatible `/v1` suffixes back to native Ollama base URL.
+- Prompts for API key with default placeholder `ollama-local` (any non-empty value).
+- Tries model discovery via `/api/tags`.
+- Always includes a manual model ID option, even when discovery succeeds.
+- If discovery fails or returns no models, shows a note and prompts manual model ID.
+
+It writes:
+
+- Auth profile: `ollama:default`
+- Provider config:
+  - `models.providers.ollama.api = "ollama"`
+  - `models.providers.ollama.apiKey = "OLLAMA_API_KEY"`
+  - `models.providers.ollama.baseUrl = <normalized base URL>`
+  - selected model metadata under `models.providers.ollama.models[]`
+
+<Note>
+`--auth-choice ollama` requires interactive onboarding/configure. There are no non-interactive Ollama flags in onboarding.
+</Note>
+
+<Note>
+`--mode remote` configures remote gateway connection only.
+Remote Ollama setup is configured when onboarding the gateway host (typically local mode on that host).
+</Note>
+
 ## Quick start
 
 1. Install Ollama: [https://ollama.ai](https://ollama.ai)

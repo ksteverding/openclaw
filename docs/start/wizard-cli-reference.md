@@ -16,7 +16,7 @@ For the short guide, see [Onboarding Wizard (CLI)](/start/wizard).
 
 Local mode (default) walks you through:
 
-- Model and auth setup (OpenAI Code subscription OAuth, Anthropic API key or setup token, plus MiniMax, GLM, Moonshot, and AI Gateway options)
+- Model and auth setup (OpenAI Code subscription OAuth, Anthropic API key or setup token, plus Ollama, MiniMax, GLM, Moonshot, and AI Gateway options)
 - Workspace location and bootstrap files
 - Gateway settings (port, bind, auth, tailscale)
 - Channels and providers (Telegram, WhatsApp, Discord, Google Chat, Mattermost plugin, Signal)
@@ -100,6 +100,9 @@ Remote mode configures this machine to connect to a gateway elsewhere.
 Remote mode does not install or modify anything on the remote host.
 </Info>
 
+`--mode remote` configures remote gateway connection only.
+Remote Ollama setup is configured when onboarding the gateway host (typically local mode on that host).
+
 What you set:
 
 - Remote gateway URL (`ws://...`)
@@ -147,6 +150,14 @@ What you set:
   </Accordion>
   <Accordion title="xAI (Grok) API key">
     Prompts for `XAI_API_KEY` and configures xAI as a model provider.
+  </Accordion>
+  <Accordion title="Ollama (local or remote runtime)">
+    Prompts for Ollama base URL, an API key placeholder (default `ollama-local`), and model ID.
+    The wizard normalizes OpenAI-compatible `/v1` URLs back to native Ollama base URLs.
+    It tries `/api/tags` model discovery first and always provides a manual model ID fallback.
+
+    Non-interactive `--auth-choice ollama` is not supported; use interactive `openclaw onboard` or `openclaw configure`.
+
   </Accordion>
   <Accordion title="OpenCode Zen">
     Prompts for `OPENCODE_API_KEY` (or `OPENCODE_ZEN_API_KEY`).

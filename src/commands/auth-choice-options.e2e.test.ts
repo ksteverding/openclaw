@@ -44,6 +44,7 @@ describe("buildAuthChoiceOptions", () => {
     ["Qwen auth choice", ["qwen-portal"]],
     ["xAI auth choice", ["xai-api-key"]],
     ["vLLM auth choice", ["vllm"]],
+    ["Ollama auth choice", ["ollama"]],
   ])("includes %s", (_label, expectedValues) => {
     const options = getOptions();
 
@@ -85,5 +86,25 @@ describe("buildAuthChoiceOptions", () => {
 
     expect(chutesGroup).toBeDefined();
     expect(chutesGroup?.options.some((opt) => opt.value === "chutes")).toBe(true);
+  });
+
+  it("shows Ollama in grouped provider selection", () => {
+    const { groups } = buildAuthChoiceGroups({
+      store: EMPTY_STORE,
+      includeSkip: false,
+    });
+    const ollamaGroup = groups.find((group) => group.value === "ollama");
+
+    expect(ollamaGroup).toBeDefined();
+    expect(ollamaGroup?.options.some((opt) => opt.value === "ollama")).toBe(true);
+  });
+
+  it("includes ollama in CLI help choices", () => {
+    const cliChoices = formatAuthChoiceChoicesForCli({
+      includeLegacyAliases: false,
+      includeSkip: true,
+    }).split("|");
+
+    expect(cliChoices).toContain("ollama");
   });
 });
