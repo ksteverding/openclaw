@@ -44,6 +44,12 @@ import {
   validateConfigObjectWithPlugins,
 } from "./validation.js";
 import { compareOpenClawVersions } from "./version.js";
+import { findValidBackup } from "./recovery.js";
+import {
+  validateConfigWriteIntegrity,
+  formatWriteGuardError,
+  type WriteGuardOptions,
+} from "./write-guard.js";
 
 // Re-export for backwards compatibility
 export { CircularIncludeError, ConfigIncludeError } from "./includes.js";
@@ -114,6 +120,11 @@ export type ConfigWriteOptions = {
    * same config file path that produced the snapshot.
    */
   expectedConfigPath?: string;
+  /**
+   * Write guard options to control structural integrity checks.
+   * Set `force: true` to bypass all guard checks.
+   */
+  writeGuard?: WriteGuardOptions;
 };
 
 export type ReadConfigFileSnapshotForWriteResult = {
@@ -619,6 +630,14 @@ export function createConfigIO(overrides: ConfigIoDeps = {}) {
       }
       const error = err as { code?: string };
       if (error?.code === "INVALID_CONFIG") {
+        // Attempt auto-recovery from backup
+        const backup = findValidBackup(configPath, deps.fs, deps.json5);
+        if (backup) {
+          deps.logger.warn(
+            `Config invalid; recovered valid backup from ${backup.label}. Run "openclaw doctor --fix" to review.`,
+          );
+          return backup.config;
+        }
         return {};
       }
       deps.logger.error(`Failed to read config at ${configPath}`, err);
@@ -854,6 +873,23 @@ export function createConfigIO(overrides: ConfigIoDeps = {}) {
         .map((warning) => `- ${warning.path}: ${warning.message}`)
         .join("\n");
       deps.logger.warn(`Config warnings:\n${details}`);
+    }
+
+    // Structural integrity guard: block writes that would destroy the config
+    if (snapshot.valid && snapshot.exists) {
+      const guardResult = validateConfigWriteIntegrity(
+        snapshot.resolved,
+        persistCandidate,
+        options.writeGuard,
+      );
+      if (!guardResult.safe) {
+        const errorMsg = formatWriteGuardError(guardResult.violations);
+        deps.logger.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+      for (const warning of guardResult.warnings) {
+        deps.logger.warn(warning);
+      }
     }
 
     // Restore ${VAR} env var references that were resolved during config loading.
@@ -1129,5 +1165,6 @@ export async function writeConfigFile(
     options.expectedConfigPath === undefined || options.expectedConfigPath === io.configPath;
   await io.writeConfigFile(cfg, {
     envSnapshotForRestore: sameConfigPath ? options.envSnapshotForRestore : undefined,
+    writeGuard: options.writeGuard,
   });
 }
