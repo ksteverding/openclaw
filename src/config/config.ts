@@ -18,12 +18,6 @@ export {
   validateConfigObjectRawWithPlugins,
   validateConfigObjectWithPlugins,
 } from "./validation.js";
-export {
-  validateConfigWriteIntegrity,
-  formatWriteGuardError,
-} from "./write-guard.js";
-export {
-  findValidBackup,
-  tryRecoverConfigFromBackup,
-} from "./recovery.js";
+export { validateConfigWriteIntegrity, formatWriteGuardError } from "./write-guard.js";
+export { findValidBackup, tryRecoverConfigFromBackup } from "./recovery.js";
 export { OpenClawSchema } from "./zod-schema.js";

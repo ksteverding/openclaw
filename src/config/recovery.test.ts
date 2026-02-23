@@ -1,8 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { findValidBackup, tryRecoverConfigFromBackup } from "./recovery.js";
 import { withTempHome } from "./home-env.test-harness.js";
+import { findValidBackup, tryRecoverConfigFromBackup } from "./recovery.js";
 
 describe("findValidBackup", () => {
   it("returns null when no backup files exist", async () => {

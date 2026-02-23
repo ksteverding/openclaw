@@ -37,6 +37,7 @@ import { findLegacyConfigIssues } from "./legacy.js";
 import { applyMergePatch } from "./merge-patch.js";
 import { normalizeConfigPaths } from "./normalize-paths.js";
 import { resolveConfigPath, resolveDefaultConfigCandidates, resolveStateDir } from "./paths.js";
+import { findValidBackup } from "./recovery.js";
 import { applyConfigOverrides } from "./runtime-overrides.js";
 import type { OpenClawConfig, ConfigFileSnapshot, LegacyConfigIssue } from "./types.js";
 import {
@@ -44,7 +45,6 @@ import {
   validateConfigObjectWithPlugins,
 } from "./validation.js";
 import { compareOpenClawVersions } from "./version.js";
-import { findValidBackup } from "./recovery.js";
 import {
   validateConfigWriteIntegrity,
   formatWriteGuardError,

@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  formatWriteGuardError,
-  validateConfigWriteIntegrity,
-} from "./write-guard.js";
+import { formatWriteGuardError, validateConfigWriteIntegrity } from "./write-guard.js";
 
 describe("validateConfigWriteIntegrity", () => {
   it("passes when proposed config retains all critical keys", () => {
@@ -36,9 +33,7 @@ describe("validateConfigWriteIntegrity", () => {
     if (!result.safe) {
       const codes = result.violations.map((v) => v.code);
       expect(codes).toContain("dropped-critical-keys");
-      const droppedMsg = result.violations.find(
-        (v) => v.code === "dropped-critical-keys",
-      );
+      const droppedMsg = result.violations.find((v) => v.code === "dropped-critical-keys");
       expect(droppedMsg?.message).toContain("agents");
       expect(droppedMsg?.message).toContain("models");
       expect(droppedMsg?.message).toContain("channels");
@@ -155,9 +150,7 @@ describe("formatWriteGuardError", () => {
   });
 
   it("formats single violation", () => {
-    const msg = formatWriteGuardError([
-      { code: "dropped-critical-keys", message: "lost agents" },
-    ]);
+    const msg = formatWriteGuardError([{ code: "dropped-critical-keys", message: "lost agents" }]);
     expect(msg).toContain("Config write blocked");
     expect(msg).toContain("lost agents");
   });

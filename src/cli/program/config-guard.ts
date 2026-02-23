@@ -77,12 +77,8 @@ export async function ensureConfigReady(params: {
     const muted = (value: string) => colorize(rich, theme.muted, value);
     const heading = (value: string) => colorize(rich, theme.heading, value);
     const commandText = (value: string) => colorize(rich, theme.command, value);
-    params.runtime.error(
-      heading("Config was invalid — automatically restored from backup"),
-    );
-    params.runtime.error(
-      `${muted("Restored from:")} ${muted(recovery.candidate.label)}`,
-    );
+    params.runtime.error(heading("Config was invalid — automatically restored from backup"));
+    params.runtime.error(`${muted("Restored from:")} ${muted(recovery.candidate.label)}`);
     params.runtime.error(
       `${muted("The corrupted config was saved to:")} ${muted(shortenHomePath(`${snapshot.path}.corrupted`))}`,
     );

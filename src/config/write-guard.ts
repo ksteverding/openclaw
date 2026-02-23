@@ -131,9 +131,7 @@ export function validateConfigWriteIntegrity(
     }
   }
   if (droppedNonCritical.length > 0) {
-    warnings.push(
-      `Config write will remove non-critical keys: ${droppedNonCritical.join(", ")}`,
-    );
+    warnings.push(`Config write will remove non-critical keys: ${droppedNonCritical.join(", ")}`);
   }
 
   if (violations.length > 0) {

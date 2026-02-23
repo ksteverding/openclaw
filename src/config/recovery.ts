@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import JSON5 from "json5";
 import { CONFIG_BACKUP_COUNT } from "./backup-rotation.js";
-import { validateConfigObjectRaw } from "./validation.js";
 import type { OpenClawConfig } from "./types.openclaw.js";
+import { validateConfigObjectRaw } from "./validation.js";
 
 export type RecoveryCandidate = {
   path: string;
@@ -98,9 +98,7 @@ export async function tryRecoverConfigFromBackup(
     recovered: false,
     backupsChecked,
     reason:
-      backupsChecked === 0
-        ? "no backup files found"
-        : "all backup files are invalid or unreadable",
+      backupsChecked === 0 ? "no backup files found" : "all backup files are invalid or unreadable",
   };
 }
 
