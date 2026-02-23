@@ -121,7 +121,7 @@ describe("tryRecoverConfigFromBackup", () => {
       await fs.writeFile(`${configPath}.bak`, "BAD BACKUP", "utf-8");
       await fs.writeFile(
         `${configPath}.bak.1`,
-        JSON.stringify({ models: { aliases: { fast: "test" } } }),
+        JSON.stringify({ gateway: { mode: "local" } }),
         "utf-8",
       );
 
