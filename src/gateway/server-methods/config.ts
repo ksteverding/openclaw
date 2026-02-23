@@ -264,7 +264,10 @@ export const configHandlers: GatewayRequestHandlers = {
     if (!parsed) {
       return;
     }
-    await writeConfigFile(parsed.config, writeOptions);
+    await writeConfigFile(parsed.config, {
+      ...writeOptions,
+      writeGuard: { source: "config.set" },
+    });
     respond(
       true,
       {
@@ -349,7 +352,10 @@ export const configHandlers: GatewayRequestHandlers = {
       );
       return;
     }
-    await writeConfigFile(validated.config, writeOptions);
+    await writeConfigFile(validated.config, {
+      ...writeOptions,
+      writeGuard: { source: "config.patch" },
+    });
 
     const { sessionKey, note, restartDelayMs, deliveryContext, threadId } =
       resolveConfigRestartRequest(params);
@@ -393,7 +399,26 @@ export const configHandlers: GatewayRequestHandlers = {
     if (!parsed) {
       return;
     }
-    await writeConfigFile(parsed.config, writeOptions);
+    try {
+      await writeConfigFile(parsed.config, {
+        ...writeOptions,
+        writeGuard: { source: "config.apply" },
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (message.startsWith("Config write blocked")) {
+        respond(
+          false,
+          undefined,
+          errorShape(
+            ErrorCodes.INVALID_REQUEST,
+            `${message}\nHint: use config.patch for safe partial updates instead of config.apply.`,
+          ),
+        );
+        return;
+      }
+      throw err;
+    }
 
     const { sessionKey, note, restartDelayMs, deliveryContext, threadId } =
       resolveConfigRestartRequest(params);
