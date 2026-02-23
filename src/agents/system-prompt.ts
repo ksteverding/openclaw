@@ -453,7 +453,9 @@ export function buildAgentSystemPrompt(params: {
       ? [
           "Get Updates (self-update) is ONLY allowed when the user explicitly asks for it.",
           "Do not run config.apply or update.run unless the user explicitly requests an update or config change; if it's not explicit, ask first.",
-          "Actions: config.get, config.schema, config.apply (validate + write full config, then restart), update.run (update deps or git, then restart).",
+          "Actions: config.get, config.schema, config.apply (validate + write full config, then restart), config.patch (merge partial update, then restart), update.run (update deps or git, then restart).",
+          "IMPORTANT: Always prefer config.patch over config.apply. config.patch safely merges your changes with the existing config. config.apply replaces the entire config and will be rejected if it drops critical keys (agents, gateway, models, channels, etc.).",
+          "Before using config.apply, always run config.get first and include ALL existing config keys in your payload — do not send only the section you want to change.",
           "After restart, OpenClaw pings the last active session automatically.",
         ].join("\n")
       : "",

@@ -1,5 +1,6 @@
 import { loadAndMaybeMigrateDoctorConfig } from "../../commands/doctor-config-flow.js";
 import { readConfigFileSnapshot } from "../../config/config.js";
+import { tryRecoverConfigFromBackup } from "../../config/recovery.js";
 import type { RuntimeEnv } from "../../runtime.js";
 import { colorize, isRich, theme } from "../../terminal/theme.js";
 import { shortenHomePath } from "../../utils.js";
@@ -69,6 +70,26 @@ export async function ensureConfigReady(params: {
     return;
   }
 
+  // Attempt auto-recovery from backup before failing
+  const recovery = await tryRecoverConfigFromBackup(snapshot.path);
+  if (recovery.recovered) {
+    const rich = isRich();
+    const muted = (value: string) => colorize(rich, theme.muted, value);
+    const heading = (value: string) => colorize(rich, theme.heading, value);
+    const commandText = (value: string) => colorize(rich, theme.command, value);
+    params.runtime.error(heading("Config was invalid — automatically restored from backup"));
+    params.runtime.error(`${muted("Restored from:")} ${muted(recovery.candidate.label)}`);
+    params.runtime.error(
+      `${muted("The corrupted config was saved to:")} ${muted(shortenHomePath(`${snapshot.path}.corrupted`))}`,
+    );
+    params.runtime.error(
+      `${muted("Run")} ${commandText(formatCliCommand("openclaw doctor --fix"))} ${muted("to review.")}`,
+    );
+    // Reset cached snapshot so subsequent reads pick up the restored config
+    configSnapshotPromise = null;
+    return;
+  }
+
   const rich = isRich();
   const muted = (value: string) => colorize(rich, theme.muted, value);
   const error = (value: string) => colorize(rich, theme.error, value);
@@ -84,6 +105,13 @@ export async function ensureConfigReady(params: {
   if (legacyIssues.length > 0) {
     params.runtime.error(muted("Legacy config keys detected:"));
     params.runtime.error(legacyIssues.map((issue) => `  ${error(issue)}`).join("\n"));
+  }
+  if (recovery.backupsChecked > 0) {
+    params.runtime.error(
+      muted(`Checked ${recovery.backupsChecked} backup(s) but none were valid.`),
+    );
+  } else {
+    params.runtime.error(muted("No backup files available for recovery."));
   }
   params.runtime.error("");
   params.runtime.error(
