@@ -69,7 +69,7 @@ export function createGatewayTool(opts?: {
     label: "Gateway",
     name: "gateway",
     description:
-      "Restart, apply config, or update the gateway in-place (SIGUSR1). Use config.patch for safe partial config updates (merges with existing). Use config.apply only when replacing entire config. Both trigger restart after writing. Always pass a human-readable completion message via the `note` parameter so the system can deliver it to the user after restart.",
+      "Restart, apply config, or update the gateway in-place (SIGUSR1). ALWAYS prefer config.patch for config changes — it safely merges your partial update with the existing config. config.apply replaces the entire config and will be REJECTED if it drops critical keys (agents, gateway, models, channels, auth, plugins, tools, skills). Only use config.apply if you have the complete config from config.get. Both trigger restart after writing. Always pass a human-readable completion message via the `note` parameter so the system can deliver it to the user after restart.",
     parameters: GatewayToolSchema,
     execute: async (_toolCallId, args) => {
       const params = args as Record<string, unknown>;
